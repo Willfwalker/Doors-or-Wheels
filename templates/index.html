@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doors vs Wheels</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #9b4dff 0%, #ff4d9b 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .title {
+            font-size: 4rem;
+            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+        }
+
+        .counter-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .vs {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0 20px;
+        }
+
+        .counter {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .value {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .increment {
+            background: #ffc107;
+            color: #333;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+
+        .increment:hover {
+            transform: scale(1.05);
+        }
+
+        .status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+
+        .emoji {
+            font-size: 2rem;
+            margin: 0 10px;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1.2rem;
+                margin-bottom: 30px;
+            }
+            .counter-container {
+                flex-direction: column;
+            }
+            .counter {
+                width: 200px;
+            }
+            .value {
+                font-size: 3.5rem;
+            }
+        }
+
+        .stats-container {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 40px;
+        }
+
+        .graph {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .bar-container {
+            height: 40px;
+            display: flex;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            transition: width 0.5s ease;
+        }
+
+        .doors-bar {
+            background: linear-gradient(45deg, #4ecdc4, #45b7af);
+            justify-content: flex-start;
+        }
+
+        .wheels-bar {
+            background: linear-gradient(45deg, #ff6b6b, #ee5253);
+            justify-content: flex-end;
+        }
+
+        .bar-label {
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .bar-label {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="title">
+        Doors 🚪 vs Wheels 🛞
+    </div>
+    <div class="subtitle">
+        Count your doors and wheels!
+    </div>
+    
+    <div class="counter-container">
+        <div class="counter">
+            <div class="value">{{ counters['doors'] }}</div>
+            <a href="{{ url_for('increment', counter_type='doors') }}">
+                <button class="increment">Add Door</button>
+            </a>
+        </div>
+
+        <div class="vs">VS</div>
+
+        <div class="counter">
+            <div class="value">{{ counters['wheels'] }}</div>
+            <a href="{{ url_for('increment', counter_type='wheels') }}">
+                <button class="increment">Add Wheel</button>
+            </a>
+        </div>
+    </div>
+
+    {% if counters['doors'] > counters['wheels'] %}
+        <div class="status">Doors are winning! 🎉</div>
+    {% elif counters['wheels'] > counters['doors'] %}
+        <div class="status">Wheels are winning! 🎉</div>
+    {% else %}
+        <div class="status">It's a tie! 🤝</div>
+    {% endif %}
+
+    <div class="stats-container">
+        <div class="graph">
+            <div class="bar-container">
+                <div class="bar doors-bar" style="width: {{ (counters['doors'] / (counters['doors'] + counters['wheels']) * 100) if (counters['doors'] + counters['wheels']) > 0 else 50 }}%">
+                    <span class="bar-label">Doors: {{ counters['doors'] }}</span>
+                </div>
+                <div class="bar wheels-bar" style="width: {{ (counters['wheels'] / (counters['doors'] + counters['wheels']) * 100) if (counters['doors'] + counters['wheels']) > 0 else 50 }}%">
+                    <span class="bar-label">Wheels: {{ counters['wheels'] }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Total Count</div>
+                <div class="stat-value">{{ counters['doors'] + counters['wheels'] }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Difference</div>
+                <div class="stat-value">{{ abs(counters['doors'] - counters['wheels']) }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Ratio</div>
+                <div class="stat-value">{{ "%.2f"|format(counters['doors'] / counters['wheels']) if counters['wheels'] > 0 else '∞' }}</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
